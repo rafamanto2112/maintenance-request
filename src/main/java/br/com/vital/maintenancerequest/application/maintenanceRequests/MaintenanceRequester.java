@@ -1,7 +1,6 @@
 package br.com.vital.maintenancerequest.application.maintenanceRequests;
 
 import br.com.vital.maintenancerequest.application.subsidiaries.ISubsidiaryRepository;
-import br.com.vital.maintenancerequest.domain.maintenanceRequests.MaintenanceRequest;
 import br.com.vital.maintenancerequest.domain.maintenanceRequests.RequestType;
 import br.com.vital.maintenancerequest.domain.subsidiaries.Subsidiary;
 
@@ -20,17 +19,6 @@ public class MaintenanceRequester {
 		final Subsidiary subsidiary = subsidiaryRepository.getById(dto.getSubsidiaryId());
 
 		final RequestType requestType = RequestType.parseByCode(dto.getRequestType());
-
-		final MaintenanceRequest maintanenceRequest = new MaintenanceRequest(
-				requester,
-				approver,
-				subsidiary,
-				type,
-				justification,
-				contract,
-				startDate,
-				status)
-
 
 	}
 

@@ -13,7 +13,6 @@ public class MaintenanceRequest extends Entity{
 
 	private final RequestType requestType;
 	private final Author requester;
-	private final Author approver;
 	private final Contract contract;
 	private final LocalDate startDate;
 	private final LocalDate requestDate;
@@ -21,28 +20,27 @@ public class MaintenanceRequest extends Entity{
 	private final Subsidiary subsidiary;
 	private final String justification;
 
-	public MaintenanceRequest(final Author requester, final Author approver, final Subsidiary subsidiary,
-			final RequestType type, final String justification, final Contract contract, final LocalDate startDate, final StatusType status) {
+	public MaintenanceRequest(final Author requester, final Subsidiary subsidiary,
+			final RequestType type, final String justification, final Contract contract, final LocalDate startDate) {
 
-		validate(requester, approver, subsidiary, type, justification, contract, startDate, status);
+		validate(requester, subsidiary, type, justification, contract, startDate);
 
 		this.requester = requester;
-		this.approver = approver;
 		this.subsidiary = subsidiary;
 		this.requestType = type;
 		this.justification = justification;
 		this.contract = contract;
 		this.startDate = startDate;
 		this.requestDate = LocalDate.now();
-		this.status = status;
+		this.status = StatusType.PENDING;
 	}
 
 	public void cancel() {
 		this.status = StatusType.CANCELED;
 	}
 
-	public void validate(final Author requester, final Author approver, final Subsidiary subsidiary, final RequestType type, final String justification, final Contract contract,
-			final LocalDate startDate, final StatusType status) {
+	public void validate(final Author requester, final Subsidiary subsidiary, final RequestType type, final String justification, final Contract contract,
+			final LocalDate startDate) {
 
 		if(Objects.isNull(contract)) {
 			throw new DomainException("D00108", "The contract must be informed");
@@ -50,10 +48,6 @@ public class MaintenanceRequest extends Entity{
 
 		if(Objects.isNull(requester)) {
 			throw new DomainException("D00109", "The requester must be informed");
-		}
-
-		if(Objects.isNull(approver)) {
-			throw new DomainException("D00110", "The approver must be informed");
 		}
 
 		if(Objects.isNull(type)) {
@@ -64,12 +58,6 @@ public class MaintenanceRequest extends Entity{
 			throw new DomainException("D00102", "The start date must be informed");
 		} else if(isStartDateValid(startDate)) {
 			throw new DomainException("D00103", "Start date invalid");
-		}
-
-		if(Objects.isNull(status)) {
-			throw new DomainException("D00104", "The status must be informed");
-		} else if(StatusType.PENDING != status) {
-			throw new DomainException("D00105", "Status invalid");
 		}
 
 		if(Objects.isNull(subsidiary)) {
@@ -83,7 +71,7 @@ public class MaintenanceRequest extends Entity{
 	}
 
 	private boolean isStartDateValid(final LocalDate startDate) {
-		return startDate.isBefore(LocalDate.now().plusDays(1));
+		return startDate.isBefore(LocalDate.now());
 	}
 
 

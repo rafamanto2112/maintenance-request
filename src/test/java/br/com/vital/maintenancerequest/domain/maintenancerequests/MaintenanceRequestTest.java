@@ -13,7 +13,6 @@ import br.com.vital.maintenancerequest.domain.maintenanceRequests.RequestType;
 import br.com.vital.maintenancerequest.domain.maintenanceRequests.StatusType;
 import br.com.vital.maintenancerequest.domain.maintenancerequests.builder.AuthorBuilder;
 import br.com.vital.maintenancerequest.domain.maintenancerequests.builder.ContractBuilder;
-import br.com.vital.maintenancerequest.domain.maintenancerequests.builder.MaintenanceRequestBuilder;
 import br.com.vital.maintenancerequest.domain.subsidiaries.buider.SubsidiaryBuider;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,25 +22,27 @@ public class MaintenanceRequestTest {
 	public void criatingWithSucessTest() {
 
 
-		final MaintenanceRequest request = MaintenanceRequestBuilder.create().build();
+		final MaintenanceRequest request = new MaintenanceRequest(AuthorBuilder.create(), SubsidiaryBuider.create(),
+				RequestType.ADD_NETWORK_POINT, "falting network point", ContractBuilder.create(), LocalDate.now());
 
 		Assert.assertNotNull(request.getId());
 		Assert.assertNotNull(request.getRequester());
-		Assert.assertNotNull(request.getApprover());
 		Assert.assertNotNull(request.getSubsidiary());
 		Assert.assertNotNull(request.getRequestType());
+		Assert.assertEquals(RequestType.ADD_NETWORK_POINT, request.getRequestType());
 		Assert.assertNotNull(request.getJustification());
-		Assert.assertNotNull(request.getStartDate());
-		Assert.assertNotNull(request.getStatus());
 		Assert.assertNotNull(request.getContract());
+		Assert.assertEquals(LocalDate.now(), request.getStartDate());
+		Assert.assertEquals(StatusType.PENDING, request.getStatus());
 	}
+
 
 	@Test
 	public void creatingWithoutContractTest() {
 
 		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(), SubsidiaryBuider.create(), RequestType.GENERATOR,
-					"constant power outage", null, LocalDate.now().plusDays(1), StatusType.PENDING);
+			new MaintenanceRequest(AuthorBuilder.create(), SubsidiaryBuider.create(),
+					RequestType.GENERATOR, "constant power outage", null, LocalDate.now());
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -50,11 +51,12 @@ public class MaintenanceRequestTest {
 		}
 	}
 
+
 	@Test
 	public void creatingWihoutRequesterTest() {
 		try {
-			new MaintenanceRequest(null, AuthorBuilder.create(), SubsidiaryBuider.create(), RequestType.PAINTING,
-					"moldy walls", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.PENDING);
+			new MaintenanceRequest(null, SubsidiaryBuider.create(),
+					RequestType.PAINTING, "moldy walls", ContractBuilder.create(), LocalDate.now());
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -64,23 +66,10 @@ public class MaintenanceRequestTest {
 	}
 
 	@Test
-	public void creatingWithoutApproverTest() {
-		try {
-			new MaintenanceRequest(AuthorBuilder.create(), null, SubsidiaryBuider.create(), RequestType.CHANGE_NETWORK_POINT,
-					"missing network points", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.PENDING);
-
-			Assert.fail();
-		} catch(final DomainException e) {
-			Assert.assertEquals("D00110", e.getCode());
-			Assert.assertTrue(e.getMessage() != null && !e.getMessage().trim().isEmpty());
-		}
-	}
-
-	@Test
 	public void creatingWithoutTypeTest() {
 		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(), SubsidiaryBuider.create(), null,
-					"any maintenance", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.PENDING);
+			new MaintenanceRequest(AuthorBuilder.create(), SubsidiaryBuider.create(), null, "any maintenance",
+					ContractBuilder.create(), LocalDate.now());
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -92,8 +81,8 @@ public class MaintenanceRequestTest {
 	@Test
 	public void creatingWithoutStartDateTest() {
 		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(), SubsidiaryBuider.create(), RequestType.LAMP_CHANGE,
-					"burnt-out lamps", ContractBuilder.create(), null, StatusType.PENDING);
+			new MaintenanceRequest(AuthorBuilder.create(), SubsidiaryBuider.create(),
+					RequestType.LAMP_CHANGE, "burnt-out lamps", ContractBuilder.create(), null);
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -102,11 +91,12 @@ public class MaintenanceRequestTest {
 		}
 	}
 
+
 	@Test
 	public void creatingWithLastStartDateTest() {
 		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(), SubsidiaryBuider.create(), RequestType.LAMP_CHANGE,
-					"burnt-out lamps", ContractBuilder.create(), LocalDate.now().minusDays(1), StatusType.PENDING);
+			new MaintenanceRequest(AuthorBuilder.create(), SubsidiaryBuider.create(),
+					RequestType.LAMP_CHANGE, "burnt-out lamps", ContractBuilder.create(), LocalDate.now().minusDays(2));
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -115,38 +105,12 @@ public class MaintenanceRequestTest {
 		}
 	}
 
-	@Test
-	public void creatingWithoutStatusTest() {
-		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(), SubsidiaryBuider.create(), RequestType.GRASS_TRIMMING,
-					"tall grams", ContractBuilder.create(), LocalDate.now().plusDays(1), null);
-
-			Assert.fail();
-		} catch(final DomainException e) {
-			Assert.assertEquals("D00104", e.getCode());
-			Assert.assertTrue(e.getMessage() != null && !e.getMessage().trim().isEmpty());
-		}
-	}
-
-	@Test
-	public void creatingWithoutInvalidStatusTest() {
-		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(), SubsidiaryBuider.create(), RequestType.GRASS_TRIMMING,
-					"tall grams", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.CANCELED);
-
-			Assert.fail();
-		} catch(final DomainException e) {
-			Assert.assertEquals("D00105", e.getCode());
-			Assert.assertTrue(e.getMessage() != null && !e.getMessage().trim().isEmpty());
-		}
-	}
 
 	@Test
 	public void creatingWithoutSubsidiaryTest() {
 		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(),
-					null, RequestType.PAINTING,
-					"moldy walls", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.PENDING);
+			new MaintenanceRequest(AuthorBuilder.create(), null,
+					RequestType.PAINTING, "moldy walls", ContractBuilder.create(), LocalDate.now());
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -158,9 +122,8 @@ public class MaintenanceRequestTest {
 	@Test
 	public void creatingWithoutJustificationTest() {
 		try {
-			new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(),
-					SubsidiaryBuider.create(), RequestType.PAINTING,
-					"", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.PENDING);
+			new MaintenanceRequest(AuthorBuilder.create(), SubsidiaryBuider.create(),
+					RequestType.PAINTING, "", ContractBuilder.create(), LocalDate.now());
 
 			Assert.fail();
 		} catch(final DomainException e) {
@@ -168,15 +131,5 @@ public class MaintenanceRequestTest {
 			Assert.assertTrue(e.getMessage() != null && !e.getMessage().trim().isEmpty());
 		}
 	}
-
-	@Test
-	public void validateRequestDateTest() {
-		final MaintenanceRequest maintenanceRequest = new MaintenanceRequest(AuthorBuilder.create(), AuthorBuilder.create(),
-				SubsidiaryBuider.create(), RequestType.PAINTING,
-				"moldy walls", ContractBuilder.create(), LocalDate.now().plusDays(1), StatusType.PENDING);
-
-		Assert.assertEquals(LocalDate.now(), maintenanceRequest.getRequestDate());
-	}
-
 
 }
