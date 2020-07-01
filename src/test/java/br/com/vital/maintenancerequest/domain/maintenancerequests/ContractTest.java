@@ -16,7 +16,7 @@ public class ContractTest {
 	@Test
 	public void successCreatingTest() {
 
-		final Contract contract = new Contract(231243434, "Tiho Services", "28381059000196", "Thomas", LocalDate.now().plusYears(3));
+		final Contract contract = new Contract(231243434L, "Tiho Services", "28381059000196", "Thomas", LocalDate.now().plusYears(3));
 
 		Assert.assertNotNull(contract.getNumber());
 		Assert.assertNotNull(contract.getName());
@@ -39,7 +39,7 @@ public class ContractTest {
 	@Test
 	public void creatingWithoutNameTest() {
 		try {
-			new Contract(231243434, "", "28381059000196", "Thomas", LocalDate.now().plusYears(3));
+			new Contract(231243434L, "", "28381059000196", "Thomas", LocalDate.now().plusYears(3));
 			Assert.fail();
 		} catch(final DomainException e) {
 			Assert.assertEquals("D00302", e.getCode());
@@ -50,7 +50,7 @@ public class ContractTest {
 	@Test
 	public void creatingWithoutEffetiveDateTest() {
 		try {
-			new Contract(231243434, "Tiho Services", "28381059000196", "Thomas", null);
+			new Contract(231243434L, "Tiho Services", "28381059000196", "Thomas", null);
 			Assert.fail();
 		} catch(final DomainException e) {
 			Assert.assertEquals("D00303", e.getCode());
@@ -61,7 +61,7 @@ public class ContractTest {
 	@Test
 	public void creatingWithExpiratedEffetiveDateTest() {
 		try {
-			new Contract(231243434, "Tiho Services", "28381059000196", "Thomas", LocalDate.now().minusDays(1));
+			new Contract(231243434L, "Tiho Services", "28381059000196", "Thomas", LocalDate.now().minusDays(1));
 			Assert.fail();
 		} catch(final DomainException e) {
 			Assert.assertEquals("D00304", e.getCode());
@@ -73,7 +73,7 @@ public class ContractTest {
 	@Test
 	public void creatingWithoutCnpjTest() {
 		try {
-			new Contract(231243434, "Tiho Services", null, "Thomas", LocalDate.now().plusYears(3));
+			new Contract(231243434L, "Tiho Services", null, "Thomas", LocalDate.now().plusYears(3));
 			Assert.fail();
 		} catch(final DomainException e) {
 			Assert.assertEquals("D00305", e.getCode());
@@ -84,7 +84,7 @@ public class ContractTest {
 	@Test
 	public void creatingWithInvalidCnpjTest() {
 		try {
-			new Contract(231243434, "Tiho Services", "123", "Thomas",LocalDate.now().plusYears(3));
+			new Contract(231243434L, "Tiho Services", "123", "Thomas",LocalDate.now().plusYears(3));
 			Assert.fail();
 		} catch(final DomainException e) {
 			Assert.assertEquals("D00306", e.getCode());
@@ -95,7 +95,7 @@ public class ContractTest {
 	@Test
 	public void creatingWithoutManager() {
 		try {
-			new Contract(231243434, "Tiho Services", "28381059000196", "", LocalDate.now().plusYears(3));
+			new Contract(231243434L, "Tiho Services", "28381059000196", "", LocalDate.now().plusYears(3));
 			Assert.fail();
 		} catch(final DomainException e) {
 			Assert.assertEquals("D00307", e.getCode());

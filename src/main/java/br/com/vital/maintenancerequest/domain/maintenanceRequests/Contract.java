@@ -11,13 +11,13 @@ import lombok.Setter;
 @Getter @Setter
 public class Contract {
 
-	private final Integer number;
+	private final Long number;
 	private final String name;
 	private final String cnpj;
 	private String manager;
 	private final LocalDate effectiveDate;
 
-	public Contract(final Integer number, final String name, final String cnpj, final String manager, final LocalDate effectiveDate) {
+	public Contract(final Long number, final String name, final String cnpj, final String manager, final LocalDate effectiveDate) {
 		validate(number, name, cnpj, manager, effectiveDate);
 
 		this.number = number;
@@ -27,7 +27,7 @@ public class Contract {
 		this.effectiveDate = effectiveDate;
 	}
 
-	public void validate(final Integer number, final String name, final String cnpj, final String manager, final LocalDate effectiveDate) {
+	public void validate(final Long number, final String name, final String cnpj, final String manager, final LocalDate effectiveDate) {
 		if(Objects.isNull(name) || name.trim().isEmpty()) {
 			throw new DomainException("D00302", "Contract Name invalid");
 		}
